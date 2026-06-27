@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact — MediSense</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:   #0A1628;
+      --navy2:  #112240;
+      --teal:   #00BFA6;
+      --teal2:  #00A896;
+      --blue:   #3B82F6;
+      --green:  #10B981;
+      --white:  #F8FAFC;
+      --gray50: #F1F5F9;
+      --gray100:#E2E8F0;
+      --gray400:#94A3B8;
+      --gray600:#64748B;
+      --gray800:#1E293B;
+      --radius: 12px;
+      --shadow: 0 4px 24px rgba(10,22,40,.10);
+      --shadow-lg: 0 12px 48px rgba(10,22,40,.18);
+    }
+
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; background: var(--white); color: var(--gray800); line-height: 1.6; }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: rgba(10,22,40,.96); backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(0,191,166,.15);
+    }
+    .nav-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; height: 68px; }
+    .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .logo-icon { width: 36px; height: 36px; background: var(--teal); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+    .logo-icon svg { width: 20px; height: 20px; fill: var(--navy); }
+    .logo-text { font-size: 1.2rem; font-weight: 700; color: var(--white); letter-spacing: -.02em; }
+    .logo-text span { color: var(--teal); }
+    .nav-links { display: flex; align-items: center; gap: 8px; list-style: none; }
+    .nav-links a { text-decoration: none; color: var(--gray400); font-size: .9rem; font-weight: 500; padding: 8px 14px; border-radius: 8px; transition: color .2s, background .2s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--white); background: rgba(255,255,255,.07); }
+    .nav-links a.nav-cta { background: var(--teal); color: var(--navy); font-weight: 600; padding: 8px 20px; }
+    .nav-links a.nav-cta:hover { background: var(--teal2); }
+    .nav-toggle { display: none; background: none; border: none; cursor: pointer; padding: 8px; }
+    .nav-toggle span { display: block; width: 24px; height: 2px; background: var(--white); margin: 5px 0; }
+    @media (max-width: 700px) {
+      .nav-toggle { display: block; }
+      .nav-links { display: none; flex-direction: column; align-items: stretch; position: absolute; top: 68px; left: 0; right: 0; background: var(--navy); padding: 12px 16px 20px; gap: 4px; border-bottom: 1px solid rgba(0,191,166,.2); }
+      .nav-links.open { display: flex; }
+      .nav-links a { padding: 12px 16px; }
+    }
+
+    /* ── HERO ── */
+    .contact-hero {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy2) 60%, #0D2B4B 100%);
+      padding: 140px 24px 80px; text-align: center; position: relative; overflow: hidden;
+    }
+    .contact-hero::after {
+      content: ''; position: absolute; bottom: -1px; left: 0; right: 0; height: 80px;
+      background: var(--white); clip-path: ellipse(55% 100% at 50% 100%);
+    }
+    .contact-hero-inner { max-width: 640px; margin: 0 auto; position: relative; }
+    .section-label { font-size: .78rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--teal); margin-bottom: 12px; }
+    .contact-hero h1 { font-family: 'DM Serif Display', serif; font-size: clamp(2.2rem, 4.5vw, 3.2rem); color: var(--white); line-height: 1.1; margin-bottom: 20px; }
+    .contact-hero p { color: var(--gray400); font-size: 1.05rem; line-height: 1.7; }
+
+    /* ── CONTACT LAYOUT ── */
+    .contact-body { padding: 72px 24px 100px; }
+    .contact-grid {
+      max-width: 1100px; margin: 0 auto;
+      display: grid; grid-template-columns: 1fr 400px; gap: 48px; align-items: start;
+    }
+    @media (max-width: 860px) { .contact-grid { grid-template-columns: 1fr; } }
+
+    /* ── FORM CARD ── */
+    .form-card {
+      background: var(--white); border: 1px solid var(--gray100);
+      border-radius: 16px; padding: 40px; box-shadow: var(--shadow);
+    }
+    .form-card h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.7rem; color: var(--navy); margin-bottom: 6px;
+    }
+    .form-card .form-sub { color: var(--gray600); font-size: .9rem; margin-bottom: 32px; }
+
+    .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 20px; }
+    .field label { font-size: .84rem; font-weight: 600; color: var(--gray800); }
+    .field input, .field textarea, .field select {
+      width: 100%; padding: 12px 16px;
+      border: 1.5px solid var(--gray100); border-radius: 8px;
+      font-size: .9rem; font-family: 'Inter', sans-serif;
+      color: var(--gray800); background: var(--white);
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .field input:focus, .field textarea:focus, .field select:focus {
+      outline: none; border-color: var(--teal); box-shadow: 0 0 0 3px rgba(0,191,166,.12);
+    }
+    .field textarea { resize: vertical; min-height: 120px; line-height: 1.6; }
+    .field input::placeholder, .field textarea::placeholder { color: var(--gray400); }
+
+    .input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 500px) { .input-row { grid-template-columns: 1fr; } }
+
+    .btn-send {
+      width: 100%; background: var(--teal); color: var(--navy);
+      font-family: 'Inter', sans-serif; font-size: 1rem; font-weight: 700;
+      padding: 15px 28px; border-radius: var(--radius);
+      border: none; cursor: pointer; display: flex; align-items: center;
+      justify-content: center; gap: 10px; transition: background .2s, transform .15s, box-shadow .15s;
+      box-shadow: 0 4px 20px rgba(0,191,166,.3); margin-top: 8px;
+    }
+    .btn-send:hover { background: var(--teal2); transform: translateY(-2px); box-shadow: 0 8px 28px rgba(0,191,166,.4); }
+    .btn-send svg { width: 18px; height: 18px; }
+
+    .form-note {
+      text-align: center; font-size: .78rem; color: var(--gray400);
+      margin-top: 14px; line-height: 1.55;
+    }
+    .form-note strong { color: var(--teal); }
+
+    /* ── SIDEBAR ── */
+    .contact-sidebar { display: flex; flex-direction: column; gap: 20px; }
+
+    .info-card {
+      background: var(--white); border: 1px solid var(--gray100);
+      border-radius: var(--radius); padding: 28px; box-shadow: var(--shadow);
+    }
+    .info-card h3 { font-size: 1rem; font-weight: 700; color: var(--navy); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+    .info-card h3 svg { width: 18px; height: 18px; flex-shrink: 0; }
+    .contact-item { display: flex; gap: 14px; align-items: flex-start; padding: 12px 0; border-bottom: 1px solid var(--gray100); }
+    .contact-item:last-child { border-bottom: none; padding-bottom: 0; }
+    .contact-item-icon {
+      width: 36px; height: 36px; border-radius: 8px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .contact-item-icon svg { width: 17px; height: 17px; }
+    .contact-item-text .label { font-size: .75rem; font-weight: 600; color: var(--gray400); letter-spacing: .06em; text-transform: uppercase; }
+    .contact-item-text .val { font-size: .9rem; color: var(--gray800); font-weight: 500; margin-top: 2px; }
+    .contact-item-text a { color: var(--teal); text-decoration: none; }
+    .contact-item-text a:hover { text-decoration: underline; }
+
+    /* FAQ accordion */
+    .faq-card {
+      background: var(--white); border: 1px solid var(--gray100);
+      border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow);
+    }
+    .faq-header {
+      padding: 20px 28px; font-size: 1rem; font-weight: 700; color: var(--navy);
+      border-bottom: 1px solid var(--gray100);
+    }
+    .faq-item { border-bottom: 1px solid var(--gray100); }
+    .faq-item:last-child { border-bottom: none; }
+    .faq-q {
+      width: 100%; background: none; border: none; text-align: left;
+      padding: 16px 28px; font-family: 'Inter', sans-serif;
+      font-size: .875rem; font-weight: 600; color: var(--navy);
+      cursor: pointer; display: flex; justify-content: space-between; align-items: center;
+      transition: background .15s;
+    }
+    .faq-q:hover { background: var(--gray50); }
+    .faq-q svg { width: 16px; height: 16px; color: var(--gray400); transition: transform .25s; flex-shrink: 0; }
+    .faq-q.open svg { transform: rotate(180deg); }
+    .faq-a {
+      max-height: 0; overflow: hidden; transition: max-height .3s ease, padding .3s;
+      font-size: .85rem; color: var(--gray600); line-height: 1.65;
+      padding: 0 28px;
+    }
+    .faq-a.open { max-height: 200px; padding: 0 28px 16px; }
+
+    /* ── CTA STRIP ── */
+    .cta-strip {
+      background: var(--gray50); border-top: 1px solid var(--gray100);
+      padding: 60px 24px; text-align: center;
+    }
+    .cta-strip p { color: var(--gray600); margin-bottom: 24px; }
+    .btn { display: inline-flex; align-items: center; gap: 8px; font-family: 'Inter', sans-serif; font-size: .95rem; font-weight: 600; padding: 13px 26px; border-radius: var(--radius); text-decoration: none; transition: transform .15s, box-shadow .15s; cursor: pointer; border: none; }
+    .btn:hover { transform: translateY(-2px); }
+    .btn-primary { background: var(--teal); color: var(--navy); box-shadow: 0 4px 20px rgba(0,191,166,.35); }
+    .btn-primary:hover { background: var(--teal2); }
+
+    /* ── FOOTER ── */
+    footer { background: var(--navy); border-top: 1px solid rgba(255,255,255,.07); padding: 48px 24px 32px; }
+    .footer-inner { max-width: 1200px; margin: 0 auto; display: flex; flex-wrap: wrap; gap: 32px; justify-content: space-between; align-items: flex-start; }
+    .footer-tagline { color: var(--gray400); font-size: .85rem; margin-top: 8px; max-width: 240px; }
+    .footer-links h4 { color: var(--white); font-size: .85rem; font-weight: 600; margin-bottom: 12px; letter-spacing: .05em; }
+    .footer-links ul { list-style: none; }
+    .footer-links li + li { margin-top: 8px; }
+    .footer-links a { color: var(--gray400); text-decoration: none; font-size: .875rem; transition: color .2s; }
+    .footer-links a:hover { color: var(--teal); }
+    .footer-bottom { max-width: 1200px; margin: 32px auto 0; padding-top: 24px; border-top: 1px solid rgba(255,255,255,.07); display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between; align-items: center; }
+    .footer-bottom p { color: var(--gray400); font-size: .8rem; }
+    .footer-disclaimer { color: var(--gray600) !important; font-size: .75rem !important; font-style: italic; }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a href="/" class="nav-logo">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 14h-2v-5H9l3-6 3 6h-2z"/></svg>
+      </div>
+      <span class="logo-text">Medi<span>Sense</span></span>
+    </a>
+    <button class="nav-toggle" onclick="this.nextElementSibling.classList.toggle('open')" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav-links">
+      <li><a href="/">Home</a></li>
+      <li><a href="/project">Diagnostics</a></li>
+      <li><a href="/about">About</a></li>
+      <li><a href="/contact" class="active">Contact</a></li>
+      <li><a href="/project" class="nav-cta">Try Now</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="contact-hero">
+  <div class="contact-hero-inner">
+    <p class="section-label">Get in Touch</p>
+    <h1>We'd love to hear from you</h1>
+    <p>Questions about the platform, feedback on the model, or partnership inquiries — send us a message and we'll get back to you within one business day.</p>
+  </div>
+</section>
+
+<!-- CONTACT BODY -->
+<div class="contact-body">
+  <div class="contact-grid">
+
+    <!-- FORM -->
+    <div class="form-card">
+      <h2>Message Us</h2>
+      <p class="form-sub">Fill in the form below. Clicking "Send Message" will open your default email client with your details pre-filled.</p>
+
+      <!--
+        ✉️ HOW THIS WORKS:
+        The form uses method="GET" with action="mailto:your@email.com"
+        so submitting it opens the user's default email app with fields populated.
+        Replace "your.email@example.com" below with your actual email address.
+      -->
+      <form
+        id="contact-form"
+        method="GET"
+        enctype="text/plain"
+        onsubmit="return handleContactSubmit(event)"
+        novalidate
+      >
+        <div class="input-row">
+          <div class="field">
+            <label for="fname">First Name <span style="color:#EF4444">*</span></label>
+            <input type="text" id="fname" name="fname" placeholder="Jane" required />
+          </div>
+          <div class="field">
+            <label for="lname">Last Name</label>
+            <input type="text" id="lname" name="lname" placeholder="Smith" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="email">Email Address <span style="color:#EF4444">*</span></label>
+          <input type="email" id="email" name="email" placeholder="jane@example.com" required />
+        </div>
+
+        <div class="field">
+          <label for="subject">Subject</label>
+          <select id="subject" name="subject">
+            <option value="">Choose a topic…</option>
+            <option value="General Enquiry">General Enquiry</option>
+            <option value="Technical Question">Technical Question</option>
+            <option value="Model Accuracy Feedback">Model Accuracy Feedback</option>
+            <option value="Partnership / Research">Partnership / Research</option>
+            <option value="Medical Professional Enquiry">Medical Professional Enquiry</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="message">Message <span style="color:#EF4444">*</span></label>
+          <textarea id="message" name="message" rows="5" placeholder="Tell us how we can help…" required></textarea>
+        </div>
+
+        <!-- Hidden field for reply-to hint -->
+        <input type="hidden" id="reply-hint" name="Reply-To" value="" />
+
+        <button type="submit" class="btn-send">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          Send Message
+        </button>
+        <p class="form-note">
+          This will open your email client with your message pre-filled. Fields marked <strong>*</strong> are required.
+        </p>
+      </form>
+
+      <!-- Success banner (shown after send) -->
+      <div id="success-banner" style="display:none; margin-top:20px; padding:16px 20px; background:rgba(16,185,129,.08); border:1px solid rgba(16,185,129,.25); border-radius:10px;">
+        <p style="font-size:.875rem;color:#10B981;font-weight:600;display:flex;align-items:center;gap:8px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          Your email client should now be open with the message ready to send!
+        </p>
+        <p style="font-size:.8rem;color:#64748B;margin-top:6px;">If it didn't open automatically, copy the details above and send them directly to <strong>your.email@example.com</strong>.</p>
+      </div>
+    </div>
+
+    <!-- SIDEBAR -->
+    <div class="contact-sidebar">
+
+      <!-- Contact details -->
+      <div class="info-card">
+        <h3>
+          <svg viewBox="0 0 24 24" fill="none" stroke="#00BFA6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Contact Details
+        </h3>
+        <div class="contact-item">
+          <div class="contact-item-icon" style="background:rgba(0,191,166,.1);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#00BFA6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          </div>
+          <div class="contact-item-text">
+            <div class="label">Email</div>
+            <!-- ✏️ Replace with your actual email address -->
+            <div class="val"><a href="mailto:anupragyaa@gmail.com">anupragyaa@gmail.com</a></div>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-item-icon" style="background:rgba(59,130,246,.1);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <div class="contact-item-text">
+            <div class="label">Response Time</div>
+            <div class="val">Within 1 business day</div>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-item-icon" style="background:rgba(16,185,129,.1);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+          <div class="contact-item-text">
+            <div class="label">Who We Talk To</div>
+            <div class="val">Individuals, clinicians, researchers</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FAQ -->
+      <div class="faq-card">
+        <div class="faq-header">Frequently Asked Questions</div>
+
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            Is this tool a medical diagnosis?
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="faq-a">No. MediSense provides a data-driven risk score for informational purposes only. It is not a substitute for professional medical diagnosis or treatment. Always consult a qualified physician.</div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            Is my health data stored anywhere?
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="faq-a">No. All analysis runs entirely in your browser. No data is transmitted to any server, logged, or stored in any form. Your privacy is absolute.</div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            Can clinicians use this professionally?
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="faq-a">MediSense can be a useful supplementary tool for identifying patients who may warrant further screening. It should not replace clinical assessment or validated diagnostic protocols.</div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            How accurate is the model?
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="faq-a">The model achieves approximately 92% accuracy on the held-out test set. Real-world performance may vary. See the About page for details on the dataset and validation methodology.</div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- CTA STRIP -->
+<div class="cta-strip">
+  <p>Ready to try the platform yourself?</p>
+  <a href="/project" class="btn btn-primary">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:17px;height:17px;"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+    Run a Health Analysis
+  </a>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div>
+      <a href="/" class="nav-logo" style="margin-bottom:8px;display:inline-flex;">
+        <div class="logo-icon" style="width:32px;height:32px;">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="width:17px;height:17px;fill:#0A1628;"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 14h-2v-5H9l3-6 3 6h-2z"/></svg>
+        </div>
+        <span class="logo-text" style="font-size:1.1rem;">Medi<span>Sense</span></span>
+      </a>
+      <p class="footer-tagline">Bridging data science and medicine to support earlier, better health decisions.</p>
+    </div>
+    <div class="footer-links">
+      <h4>Platform</h4>
+      <ul>
+        <li><a href="/project">Diagnostics</a></li>
+        <li><a href="/about">How It Works</a></li>
+      </ul>
+    </div>
+    <div class="footer-links">
+      <h4>Company</h4>
+      <ul>
+        <li><a href="/about">About</a></li>
+        <li><a href="/contact">Contact</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2025 MediSense. All rights reserved.</p>
+    <p class="footer-disclaimer">Not a substitute for professional medical advice.</p>
+  </div>
+</footer>
+
+<script>
+  // ── FAQ toggle ──
+  function toggleFaq(btn) {
+    const answer = btn.nextElementSibling;
+    const isOpen = btn.classList.contains('open');
+    // Close all
+    document.querySelectorAll('.faq-q.open').forEach(q => {
+      q.classList.remove('open');
+      q.nextElementSibling.classList.remove('open');
+    });
+    if (!isOpen) {
+      btn.classList.add('open');
+      answer.classList.add('open');
+    }
+  }
+
+  // ── Contact form → mailto ──
+  function handleContactSubmit(e) {
+    e.preventDefault();
+    const fname   = document.getElementById('fname').value.trim();
+    const lname   = document.getElementById('lname').value.trim();
+    const email   = document.getElementById('email').value.trim();
+    const subject = document.getElementById('subject').value || 'General Enquiry';
+    const message = document.getElementById('message').value.trim();
+
+    if (!fname) { alert('Please enter your first name.'); return false; }
+    if (!email || !email.includes('@')) { alert('Please enter a valid email address.'); return false; }
+    if (!message) { alert('Please enter a message.'); return false; }
+
+    const fullName  = lname ? `${fname} ${lname}` : fname;
+    const emailSubject = `[MediSense] ${subject} — from ${fullName}`;
+    const body = `Name: ${fullName}\nEmail: ${email}\nSubject: ${subject}\n\nMessage:\n${message}\n\n---\nSent via MediSense Contact Form`;
+
+    // ✏️ Replace the email below with your actual address
+    const targetEmail = 'anupragyaa@gmail.com';
+    const mailto = `mailto:${targetEmail}?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(body)}`;
+
+    window.location.href = mailto;
+    document.getElementById('success-banner').style.display = 'block';
+    return false;
+  }
+</script>
+
+</body>
+</html>

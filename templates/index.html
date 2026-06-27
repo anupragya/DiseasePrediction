@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MediSense — Intelligent Health Diagnostics</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:   #0A1628;
+      --navy2:  #112240;
+      --teal:   #00BFA6;
+      --teal2:  #00A896;
+      --blue:   #3B82F6;
+      --white:  #F8FAFC;
+      --gray50: #F1F5F9;
+      --gray100:#E2E8F0;
+      --gray400:#94A3B8;
+      --gray600:#64748B;
+      --gray800:#1E293B;
+      --radius: 12px;
+      --shadow: 0 4px 24px rgba(10,22,40,.10);
+      --shadow-lg: 0 12px 48px rgba(10,22,40,.18);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--white);
+      color: var(--gray800);
+      line-height: 1.6;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: rgba(10,22,40,.96);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(0,191,166,.15);
+    }
+    .nav-inner {
+      max-width: 1200px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 24px; height: 68px;
+    }
+    .nav-logo {
+      display: flex; align-items: center; gap: 10px;
+      text-decoration: none;
+    }
+    .logo-icon {
+      width: 36px; height: 36px; background: var(--teal);
+      border-radius: 8px; display: flex; align-items: center; justify-content: center;
+    }
+    .logo-icon svg { width: 20px; height: 20px; fill: var(--navy); }
+    .logo-text { font-size: 1.2rem; font-weight: 700; color: var(--white); letter-spacing: -.02em; }
+    .logo-text span { color: var(--teal); }
+
+    .nav-links { display: flex; align-items: center; gap: 8px; list-style: none; }
+    .nav-links a {
+      text-decoration: none; color: var(--gray400);
+      font-size: .9rem; font-weight: 500; padding: 8px 14px;
+      border-radius: 8px; transition: color .2s, background .2s;
+    }
+    .nav-links a:hover, .nav-links a.active { color: var(--white); background: rgba(255,255,255,.07); }
+    .nav-links a.nav-cta {
+      background: var(--teal); color: var(--navy); font-weight: 600;
+      padding: 8px 20px;
+    }
+    .nav-links a.nav-cta:hover { background: var(--teal2); }
+
+    .nav-toggle { display: none; background: none; border: none; cursor: pointer; padding: 8px; }
+    .nav-toggle span {
+      display: block; width: 24px; height: 2px; background: var(--white);
+      margin: 5px 0; transition: .3s;
+    }
+
+    @media (max-width: 700px) {
+      .nav-toggle { display: block; }
+      .nav-links {
+        display: none; flex-direction: column; align-items: stretch;
+        position: absolute; top: 68px; left: 0; right: 0;
+        background: var(--navy); padding: 12px 16px 20px; gap: 4px;
+        border-bottom: 1px solid rgba(0,191,166,.2);
+      }
+      .nav-links.open { display: flex; }
+      .nav-links a { padding: 12px 16px; }
+    }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy2) 55%, #0D2B4B 100%);
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 120px 24px 80px; position: relative; overflow: hidden;
+    }
+    .hero-bg-circle {
+      position: absolute; border-radius: 50%;
+      background: radial-gradient(circle, rgba(0,191,166,.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-bg-circle.c1 { width: 700px; height: 700px; top: -200px; right: -200px; }
+    .hero-bg-circle.c2 { width: 400px; height: 400px; bottom: -100px; left: -100px; }
+
+    /* ECG line – the signature element */
+    .ecg-wrap {
+      position: absolute; left: 0; right: 0; top: 50%;
+      transform: translateY(-50%); opacity: .07; pointer-events: none;
+      overflow: hidden;
+    }
+    .ecg-svg { width: 100%; height: 80px; }
+    .ecg-path {
+      stroke: var(--teal); stroke-width: 2; fill: none;
+      stroke-dasharray: 2000;
+      stroke-dashoffset: 2000;
+      animation: ecg-draw 3s ease forwards 0.5s;
+    }
+    @keyframes ecg-draw {
+      to { stroke-dashoffset: 0; }
+    }
+
+    .hero-content { position: relative; max-width: 1200px; margin: 0 auto; width: 100%; }
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(0,191,166,.12); border: 1px solid rgba(0,191,166,.3);
+      border-radius: 100px; padding: 6px 16px;
+      color: var(--teal); font-size: .82rem; font-weight: 600; letter-spacing: .08em;
+      text-transform: uppercase; margin-bottom: 24px;
+    }
+    .hero-eyebrow::before {
+      content: ''; width: 6px; height: 6px; background: var(--teal);
+      border-radius: 50%; animation: pulse-dot 2s infinite;
+    }
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: .5; transform: scale(.7); }
+    }
+
+    .hero h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(2.4rem, 5vw, 4.2rem);
+      color: var(--white); line-height: 1.1; letter-spacing: -.02em;
+      max-width: 750px; margin-bottom: 24px;
+    }
+    .hero h1 em {
+      font-style: italic; color: var(--teal);
+      display: block;
+    }
+    .hero-sub {
+      font-size: 1.1rem; color: var(--gray400); max-width: 520px;
+      margin-bottom: 48px; line-height: 1.7;
+    }
+    .hero-ctas { display: flex; flex-wrap: wrap; gap: 16px; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-family: 'Inter', sans-serif; font-size: .95rem; font-weight: 600;
+      padding: 14px 28px; border-radius: var(--radius);
+      text-decoration: none; transition: transform .15s, box-shadow .15s;
+      cursor: pointer; border: none;
+    }
+    .btn:hover { transform: translateY(-2px); }
+    .btn-primary {
+      background: var(--teal); color: var(--navy);
+      box-shadow: 0 4px 20px rgba(0,191,166,.35);
+    }
+    .btn-primary:hover { background: var(--teal2); box-shadow: 0 8px 28px rgba(0,191,166,.45); }
+    .btn-secondary {
+      background: rgba(255,255,255,.08); color: var(--white);
+      border: 1px solid rgba(255,255,255,.18);
+    }
+    .btn-secondary:hover { background: rgba(255,255,255,.14); }
+    .btn-outline-teal {
+      background: transparent; color: var(--teal);
+      border: 1.5px solid var(--teal);
+    }
+    .btn-outline-teal:hover { background: rgba(0,191,166,.08); }
+    .btn svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+    /* hero stats strip */
+    .hero-stats {
+      display: flex; flex-wrap: wrap; gap: 0;
+      margin-top: 64px; padding-top: 40px;
+      border-top: 1px solid rgba(255,255,255,.1);
+    }
+    .stat-item {
+      flex: 1; min-width: 140px;
+      padding: 0 32px 0 0;
+    }
+    .stat-item + .stat-item {
+      padding-left: 32px;
+      border-left: 1px solid rgba(255,255,255,.1);
+    }
+    .stat-num {
+      font-size: 2rem; font-weight: 700; color: var(--white); letter-spacing: -.04em;
+    }
+    .stat-num span { color: var(--teal); }
+    .stat-label { font-size: .82rem; color: var(--gray400); margin-top: 2px; }
+
+    /* ── BENEFITS ── */
+    .benefits { padding: 100px 24px; background: var(--white); }
+    .section-inner { max-width: 1200px; margin: 0 auto; }
+    .section-label {
+      font-size: .78rem; font-weight: 700; letter-spacing: .12em;
+      text-transform: uppercase; color: var(--teal); margin-bottom: 12px;
+    }
+    .section-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+      color: var(--navy); line-height: 1.15; letter-spacing: -.02em;
+      max-width: 520px; margin-bottom: 16px;
+    }
+    .section-sub { color: var(--gray600); max-width: 480px; margin-bottom: 56px; }
+
+    .benefits-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+    }
+    .benefit-card {
+      background: var(--white);
+      border: 1px solid var(--gray100);
+      border-radius: var(--radius);
+      padding: 32px;
+      transition: box-shadow .2s, transform .2s;
+      position: relative; overflow: hidden;
+    }
+    .benefit-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--teal), var(--blue));
+      opacity: 0; transition: opacity .2s;
+    }
+    .benefit-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-4px); }
+    .benefit-card:hover::before { opacity: 1; }
+    .benefit-icon {
+      width: 48px; height: 48px; border-radius: 10px;
+      background: rgba(0,191,166,.1);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 20px;
+    }
+    .benefit-icon svg { width: 24px; height: 24px; }
+    .benefit-card h3 { font-size: 1.05rem; font-weight: 600; color: var(--navy); margin-bottom: 10px; }
+    .benefit-card p { font-size: .9rem; color: var(--gray600); line-height: 1.65; }
+
+    /* ── HOW IT WORKS ── */
+    .how { padding: 80px 24px 100px; background: var(--gray50); }
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 0;
+      margin-top: 0;
+      position: relative;
+    }
+    .steps::before {
+      content: '';
+      position: absolute; top: 28px; left: 10%; right: 10%; height: 2px;
+      background: linear-gradient(90deg, var(--teal), var(--blue));
+      z-index: 0;
+    }
+    .step {
+      text-align: center; padding: 0 24px 0;
+      position: relative; z-index: 1;
+    }
+    .step-num {
+      width: 56px; height: 56px; border-radius: 50%;
+      background: var(--navy); color: var(--teal);
+      font-size: 1.1rem; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 24px; border: 3px solid var(--teal);
+    }
+    .step h3 { font-size: 1rem; font-weight: 600; color: var(--navy); margin-bottom: 8px; }
+    .step p { font-size: .875rem; color: var(--gray600); line-height: 1.6; }
+
+    /* ── CTA BANNER ── */
+    .cta-banner {
+      padding: 80px 24px;
+      background: linear-gradient(135deg, var(--navy), var(--navy2));
+      text-align: center;
+    }
+    .cta-banner h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+      color: var(--white); margin-bottom: 16px;
+    }
+    .cta-banner p { color: var(--gray400); margin-bottom: 36px; max-width: 480px; margin-left: auto; margin-right: auto; }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--navy);
+      border-top: 1px solid rgba(255,255,255,.07);
+      padding: 48px 24px 32px;
+    }
+    .footer-inner {
+      max-width: 1200px; margin: 0 auto;
+      display: flex; flex-wrap: wrap; gap: 32px;
+      justify-content: space-between; align-items: flex-start;
+    }
+    .footer-brand .logo-text { font-size: 1.1rem; }
+    .footer-tagline { color: var(--gray400); font-size: .85rem; margin-top: 8px; max-width: 240px; }
+    .footer-links h4 { color: var(--white); font-size: .85rem; font-weight: 600; margin-bottom: 12px; letter-spacing: .05em; }
+    .footer-links ul { list-style: none; }
+    .footer-links li + li { margin-top: 8px; }
+    .footer-links a { color: var(--gray400); text-decoration: none; font-size: .875rem; transition: color .2s; }
+    .footer-links a:hover { color: var(--teal); }
+    .footer-bottom {
+      max-width: 1200px; margin: 32px auto 0;
+      padding-top: 24px; border-top: 1px solid rgba(255,255,255,.07);
+      display: flex; flex-wrap: wrap; gap: 12px;
+      justify-content: space-between; align-items: center;
+    }
+    .footer-bottom p { color: var(--gray400); font-size: .8rem; }
+    .footer-disclaimer { color: var(--gray600) !important; font-size: .75rem !important; font-style: italic; }
+
+    @media (max-width: 600px) {
+      .hero-stats { flex-direction: column; gap: 24px; }
+      .stat-item + .stat-item { padding-left: 0; border-left: none; border-top: 1px solid rgba(255,255,255,.1); padding-top: 24px; }
+      .steps::before { display: none; }
+      .hero-ctas { flex-direction: column; }
+      .btn { justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 14h-2v-5H9l3-6 3 6h-2z"/>
+        </svg>
+      </div>
+      <span class="logo-text">Medi<span>Sense</span></span>
+    </a>
+    <button class="nav-toggle" onclick="this.nextElementSibling.classList.toggle('open')" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav-links">
+      <li><a href="/">Home</a></li>
+      <li><a href="/project">Diagnostics</a></li>
+      <li><a href="/about">About</a></li>
+      <li><a href="/contact">Contact</a></li>
+</ul>
+    
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg-circle c1"></div>
+  <div class="hero-bg-circle c2"></div>
+
+  <!-- ECG signature element -->
+  <div class="ecg-wrap" aria-hidden="true">
+    <svg class="ecg-svg" viewBox="0 0 1440 80" preserveAspectRatio="none">
+      <path class="ecg-path" d="M0,40 L120,40 L150,40 L160,10 L170,70 L180,20 L190,40 L240,40 L360,40 L390,40 L400,10 L410,70 L420,20 L430,40 L480,40 L600,40 L630,40 L640,10 L650,70 L660,20 L670,40 L720,40 L840,40 L870,40 L880,10 L890,70 L900,20 L910,40 L960,40 L1080,40 L1110,40 L1120,10 L1130,70 L1140,20 L1150,40 L1200,40 L1320,40 L1350,40 L1360,10 L1370,70 L1380,20 L1390,40 L1440,40"/>
+    </svg>
+  </div>
+
+  <div class="hero-content">
+    <div class="hero-eyebrow">AI-Powered Health Intelligence</div>
+    <h1>
+      Early detection<br>starts with
+      <em>better data.</em>
+    </h1>
+    <p class="hero-sub">
+      MediSense analyzes your key health metrics — glucose, BMI, cholesterol, heart rate and more — to surface risk patterns before they become diagnoses.
+    </p>
+    <div class="hero-ctas">
+      <a href="/project" class="btn btn-primary">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        Run a Diagnosis
+      </a>
+      <a href="/about" class="btn btn-secondary">
+        How It Works
+      </a>
+      <a href="/contact" class="btn btn-outline-teal">
+        Get in Touch
+      </a>
+    </div>
+
+    <div class="hero-stats">
+      <div class="stat-item">
+        <div class="stat-num">10<span>K+</span></div>
+        <div class="stat-label">Patient records analysed</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">7</div>
+        <div class="stat-label">Health metrics tracked</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">4<span>x</span></div>
+        <div class="stat-label">Faster risk assessment</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">92<span>%</span></div>
+        <div class="stat-label">Model accuracy (test set)</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BENEFITS -->
+<section class="benefits">
+  <div class="section-inner">
+    <p class="section-label">Why MediSense</p>
+    <h2 class="section-title">The right insights, at the right moment</h2>
+    <p class="section-sub">Designed for clinicians, researchers, and health-conscious individuals who need clarity — not noise.</p>
+
+    <div class="benefits-grid">
+      <div class="benefit-card">
+        <div class="benefit-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#00BFA6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+          </svg>
+        </div>
+        <h3>Real-Time Risk Scoring</h3>
+        <p>Input your metrics and receive an immediate, evidence-backed risk assessment across multiple disease categories simultaneously.</p>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>
+          </svg>
+        </div>
+        <h3>Evidence-Based Analysis</h3>
+        <p>Trained on a clinically sourced dataset covering age, BMI, blood pressure, glucose, cholesterol, smoking habits, and family history.</p>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#00BFA6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/>
+          </svg>
+        </div>
+        <h3>Clean, Interpretable Output</h3>
+        <p>No black boxes. Every risk flag is accompanied by the contributing factors, so you know which metrics to act on first.</p>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+        </div>
+        <h3>Privacy-First Design</h3>
+        <p>All computations run client-side. Your health data never leaves your browser — no accounts, no data collection.</p>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#00BFA6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+        </div>
+        <h3>Built for All Users</h3>
+        <p>Whether you're a medical professional reviewing patient data or an individual tracking personal health trends, the interface adapts to you.</p>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/>
+          </svg>
+        </div>
+        <h3>Continuous Improvement</h3>
+        <p>The underlying model is regularly validated and updated as new clinical research and expanded datasets become available.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how">
+  <div class="section-inner">
+    <p class="section-label">The Process</p>
+    <h2 class="section-title">Three steps to a clearer picture of your health</h2>
+    <p class="section-sub" style="margin-bottom: 64px;">A transparent, repeatable process from raw inputs to actionable findings.</p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h3>Enter Health Data</h3>
+        <p>Provide your age, BMI, blood pressure, glucose, cholesterol, heart rate, and lifestyle markers using the simple input form.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h3>Feature Analysis</h3>
+        <p>The model evaluates each metric against population-level patterns, weighting factors by their clinical significance for each disease type.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h3>Risk Report</h3>
+        <p>Receive a clear risk score, a breakdown of contributing factors, and guidance on which metrics warrant a follow-up with your physician.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BANNER -->
+<section class="cta-banner">
+  <h2>Ready to take the first step?</h2>
+  <p>It takes under two minutes. No sign-up required.</p>
+  <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
+    <a href="/project" class="btn btn-primary">Start Your Analysis</a>
+    <a href="/about" class="btn btn-secondary">Learn About the Platform</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <a href="/" class="nav-logo" style="margin-bottom:8px;display:inline-flex;">
+        <div class="logo-icon" style="width:32px;height:32px;">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="width:17px;height:17px;fill:#0A1628;">
+            <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 14h-2v-5H9l3-6 3 6h-2z"/>
+          </svg>
+        </div>
+        <span class="logo-text" style="font-size:1.1rem;">Medi<span>Sense</span></span>
+      </a>
+      <p class="footer-tagline">Bridging data science and medicine to support earlier, better health decisions.</p>
+    </div>
+    <div class="footer-links">
+      <h4>Platform</h4>
+      <ul>
+        <li><a href="/project">Diagnostics</a></li>
+        <li><a href="/about">How It Works</a></li>
+        <li><a href="/about">Our Mission</a></li>
+      </ul>
+    </div>
+    <div class="footer-links">
+      <h4>Company</h4>
+      <ul>
+        <li><a href="/about">About</a></li>
+        <li><a href="/contact">Contact Us</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2025 MediSense. All rights reserved.</p>
+    <p class="footer-disclaimer">For informational purposes only. Not a substitute for professional medical advice.</p>
+  </div>
+</footer>
+
+</body>
+</html>

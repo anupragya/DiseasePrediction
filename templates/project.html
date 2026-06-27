@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Diagnostics — MediSense</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:   #0A1628;
+      --navy2:  #112240;
+      --teal:   #00BFA6;
+      --teal2:  #00A896;
+      --blue:   #3B82F6;
+      --green:  #10B981;
+      --yellow: #F59E0B;
+      --red:    #EF4444;
+      --white:  #F8FAFC;
+      --gray50: #F1F5F9;
+      --gray100:#E2E8F0;
+      --gray400:#94A3B8;
+      --gray600:#64748B;
+      --gray800:#1E293B;
+      --radius: 12px;
+      --shadow: 0 4px 24px rgba(10,22,40,.10);
+      --shadow-lg: 0 12px 48px rgba(10,22,40,.18);
+    }
+
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; background: var(--gray50); color: var(--gray800); line-height: 1.6; }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: rgba(10,22,40,.96); backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(0,191,166,.15);
+    }
+    .nav-inner {
+      max-width: 1200px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 24px; height: 68px;
+    }
+    .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .logo-icon {
+      width: 36px; height: 36px; background: var(--teal);
+      border-radius: 8px; display: flex; align-items: center; justify-content: center;
+    }
+    .logo-icon svg { width: 20px; height: 20px; fill: var(--navy); }
+    .logo-text { font-size: 1.2rem; font-weight: 700; color: var(--white); letter-spacing: -.02em; }
+    .logo-text span { color: var(--teal); }
+    .nav-links { display: flex; align-items: center; gap: 8px; list-style: none; }
+    .nav-links a {
+      text-decoration: none; color: var(--gray400);
+      font-size: .9rem; font-weight: 500; padding: 8px 14px;
+      border-radius: 8px; transition: color .2s, background .2s;
+    }
+    .nav-links a:hover, .nav-links a.active { color: var(--white); background: rgba(255,255,255,.07); }
+    .nav-links a.nav-cta { background: var(--teal); color: var(--navy); font-weight: 600; padding: 8px 20px; }
+    .nav-links a.nav-cta:hover { background: var(--teal2); }
+    .nav-toggle { display: none; background: none; border: none; cursor: pointer; padding: 8px; }
+    .nav-toggle span { display: block; width: 24px; height: 2px; background: var(--white); margin: 5px 0; }
+    @media (max-width: 700px) {
+      .nav-toggle { display: block; }
+      .nav-links {
+        display: none; flex-direction: column; align-items: stretch;
+        position: absolute; top: 68px; left: 0; right: 0;
+        background: var(--navy); padding: 12px 16px 20px; gap: 4px;
+        border-bottom: 1px solid rgba(0,191,166,.2);
+      }
+      .nav-links.open { display: flex; }
+      .nav-links a { padding: 12px 16px; }
+    }
+
+    /* ── PAGE HEADER ── */
+    .page-header {
+      background: linear-gradient(135deg, var(--navy), var(--navy2));
+      padding: 120px 24px 60px;
+    }
+    .page-header-inner { max-width: 1200px; margin: 0 auto; }
+    .breadcrumb {
+      display: flex; align-items: center; gap: 8px;
+      color: var(--gray400); font-size: .82rem; margin-bottom: 16px;
+    }
+    .breadcrumb a { color: var(--teal); text-decoration: none; }
+    .breadcrumb span { color: var(--gray600); }
+    .page-header h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(2rem, 4vw, 3rem);
+      color: var(--white); margin-bottom: 12px;
+    }
+    .page-header p { color: var(--gray400); max-width: 560px; }
+
+    /* ── DASHBOARD GRID ── */
+    .dashboard {
+      max-width: 1200px; margin: 0 auto;
+      padding: 40px 24px 80px;
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 28px;
+      align-items: start;
+    }
+    @media (max-width: 900px) {
+      .dashboard { grid-template-columns: 1fr; }
+    }
+
+    /* ── CARDS ── */
+    .card {
+      background: var(--white);
+      border: 1px solid var(--gray100);
+      border-radius: var(--radius);
+      padding: 32px;
+      box-shadow: var(--shadow);
+    }
+    .card-title {
+      font-size: 1rem; font-weight: 700; color: var(--navy);
+      margin-bottom: 6px; display: flex; align-items: center; gap: 10px;
+    }
+    .card-title svg { width: 18px; height: 18px; flex-shrink: 0; }
+    .card-subtitle { font-size: .83rem; color: var(--gray600); margin-bottom: 28px; }
+
+    /* ── FORM ── */
+    .form-section-label {
+      font-size: .72rem; font-weight: 700; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--teal);
+      margin: 24px 0 16px; padding-bottom: 8px;
+      border-bottom: 1px solid var(--gray100);
+    }
+    .form-section-label:first-child { margin-top: 0; }
+
+    .input-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    @media (max-width: 500px) { .input-grid { grid-template-columns: 1fr; } }
+
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field.full { grid-column: 1 / -1; }
+    .field label {
+      font-size: .82rem; font-weight: 600; color: var(--gray800);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .field label .range-hint {
+      font-weight: 400; color: var(--gray400); font-size: .78rem;
+    }
+    .field input[type="number"],
+    .field select {
+      width: 100%; padding: 10px 14px;
+      border: 1.5px solid var(--gray100);
+      border-radius: 8px; font-size: .9rem; font-family: 'Inter', sans-serif;
+      color: var(--gray800); background: var(--white);
+      transition: border-color .2s, box-shadow .2s;
+      -moz-appearance: textfield;
+    }
+    .field input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+    .field input:focus, .field select:focus {
+      outline: none;
+      border-color: var(--teal);
+      box-shadow: 0 0 0 3px rgba(0,191,166,.12);
+    }
+    .field select { cursor: pointer; }
+
+    /* Toggle switches for boolean fields */
+    .toggle-group { display: flex; gap: 8px; flex-wrap: wrap; }
+    .toggle-opt input { display: none; }
+    .toggle-opt label {
+      padding: 8px 18px; border-radius: 8px;
+      border: 1.5px solid var(--gray100); font-size: .875rem; font-weight: 500;
+      color: var(--gray600); cursor: pointer; transition: all .2s;
+      user-select: none;
+    }
+    .toggle-opt input:checked + label {
+      background: rgba(0,191,166,.1);
+      border-color: var(--teal); color: var(--teal);
+    }
+
+    /* Range slider */
+    .slider-wrap { display: flex; align-items: center; gap: 12px; }
+    .slider-val {
+      min-width: 48px; text-align: right;
+      font-size: .95rem; font-weight: 600; color: var(--teal);
+    }
+    input[type="range"] {
+      flex: 1; -webkit-appearance: none; height: 4px;
+      border-radius: 4px; background: var(--gray100); outline: none;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none; width: 18px; height: 18px;
+      border-radius: 50%; background: var(--teal); cursor: pointer;
+      border: 2px solid white; box-shadow: 0 2px 8px rgba(0,191,166,.4);
+    }
+
+    /* Submit */
+    .btn-analyze {
+      width: 100%; margin-top: 28px;
+      background: var(--teal); color: var(--navy);
+      font-family: 'Inter', sans-serif; font-size: 1rem; font-weight: 700;
+      padding: 15px 28px; border-radius: var(--radius);
+      border: none; cursor: pointer; display: flex; align-items: center;
+      justify-content: center; gap: 10px; transition: background .2s, transform .15s, box-shadow .15s;
+      box-shadow: 0 4px 20px rgba(0,191,166,.3);
+    }
+    .btn-analyze:hover { background: var(--teal2); transform: translateY(-2px); box-shadow: 0 8px 28px rgba(0,191,166,.4); }
+    .btn-analyze svg { width: 20px; height: 20px; }
+
+    /* Reset */
+    .btn-reset {
+      width: 100%; margin-top: 10px;
+      background: transparent; color: var(--gray600);
+      font-family: 'Inter', sans-serif; font-size: .875rem; font-weight: 500;
+      padding: 10px; border-radius: var(--radius);
+      border: 1px solid var(--gray100); cursor: pointer; transition: .2s;
+    }
+    .btn-reset:hover { border-color: var(--gray400); color: var(--gray800); }
+
+    /* ── RESULT PANEL ── */
+    .result-panel { display: flex; flex-direction: column; gap: 20px; }
+
+    .disclaimer-card {
+      background: rgba(245,158,11,.06);
+      border: 1px solid rgba(245,158,11,.3);
+      border-radius: var(--radius); padding: 16px 20px;
+      display: flex; gap: 12px; align-items: flex-start;
+    }
+    .disclaimer-card svg { width: 18px; height: 18px; flex-shrink: 0; color: var(--yellow); margin-top: 2px; }
+    .disclaimer-card p { font-size: .8rem; color: var(--gray600); line-height: 1.55; }
+
+    /* Placeholder / result display */
+    .result-placeholder {
+      text-align: center; padding: 48px 24px;
+      color: var(--gray400);
+    }
+    .result-placeholder svg { width: 56px; height: 56px; margin: 0 auto 16px; opacity: .35; }
+    .result-placeholder p { font-size: .9rem; line-height: 1.6; }
+
+    /* Result output (shown after submission) */
+    .result-output { display: none; }
+    .result-output.visible { display: block; }
+
+    .risk-score-wrap { text-align: center; padding: 24px 0 20px; }
+    .risk-label { font-size: .78rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--gray600); margin-bottom: 8px; }
+    .risk-gauge {
+      width: 140px; height: 140px; margin: 0 auto 12px;
+      border-radius: 50%; position: relative;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .risk-gauge-bg {
+      position: absolute; inset: 0; border-radius: 50%;
+      border: 10px solid var(--gray100);
+    }
+    .risk-gauge-fill {
+      position: absolute; inset: 0; border-radius: 50%;
+      border: 10px solid transparent;
+      border-top-color: var(--green);
+      border-right-color: var(--green);
+      transform: rotate(-45deg);
+      transition: all .6s cubic-bezier(.4,0,.2,1);
+    }
+    .risk-pct { font-size: 2.2rem; font-weight: 700; color: var(--navy); }
+    .risk-tier { font-size: .85rem; font-weight: 600; margin-top: 4px; }
+    .risk-tier.low { color: var(--green); }
+    .risk-tier.medium { color: var(--yellow); }
+    .risk-tier.high { color: var(--red); }
+
+    .factor-list { margin-top: 20px; }
+    .factor-list h4 { font-size: .85rem; font-weight: 600; color: var(--gray800); margin-bottom: 12px; }
+    .factor-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 8px 0; border-bottom: 1px solid var(--gray100); font-size: .875rem;
+    }
+    .factor-item:last-child { border-bottom: none; }
+    .factor-name { color: var(--gray600); }
+    .factor-val { font-weight: 600; color: var(--navy); }
+    .factor-bar-wrap { width: 60px; height: 4px; background: var(--gray100); border-radius: 4px; overflow: hidden; }
+    .factor-bar { height: 100%; border-radius: 4px; transition: width .6s ease .2s; }
+
+    .advice-card {
+      margin-top: 16px; padding: 16px 20px;
+      background: rgba(16,185,129,.06); border: 1px solid rgba(16,185,129,.2);
+      border-radius: var(--radius);
+    }
+    .advice-card h4 { font-size: .85rem; font-weight: 600; color: var(--green); margin-bottom: 6px; }
+    .advice-card p { font-size: .82rem; color: var(--gray600); line-height: 1.6; }
+
+    /* Progress bar in input form */
+    .completeness-bar-wrap {
+      margin-bottom: 4px;
+    }
+    .completeness-label {
+      display: flex; justify-content: space-between;
+      font-size: .75rem; color: var(--gray400); margin-bottom: 6px;
+    }
+    .completeness-track {
+      height: 4px; background: var(--gray100); border-radius: 4px; overflow: hidden;
+    }
+    .completeness-fill {
+      height: 100%; background: linear-gradient(90deg, var(--teal), var(--blue));
+      border-radius: 4px; transition: width .3s ease;
+      width: 0%;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--navy);
+      border-top: 1px solid rgba(255,255,255,.07);
+      padding: 48px 24px 32px;
+    }
+    .footer-inner {
+      max-width: 1200px; margin: 0 auto;
+      display: flex; flex-wrap: wrap; gap: 32px;
+      justify-content: space-between; align-items: flex-start;
+    }
+    .footer-tagline { color: var(--gray400); font-size: .85rem; margin-top: 8px; max-width: 240px; }
+    .footer-links h4 { color: var(--white); font-size: .85rem; font-weight: 600; margin-bottom: 12px; letter-spacing: .05em; }
+    .footer-links ul { list-style: none; }
+    .footer-links li + li { margin-top: 8px; }
+    .footer-links a { color: var(--gray400); text-decoration: none; font-size: .875rem; transition: color .2s; }
+    .footer-links a:hover { color: var(--teal); }
+    .footer-bottom {
+      max-width: 1200px; margin: 32px auto 0;
+      padding-top: 24px; border-top: 1px solid rgba(255,255,255,.07);
+      display: flex; flex-wrap: wrap; gap: 12px;
+      justify-content: space-between; align-items: center;
+    }
+    .footer-bottom p { color: var(--gray400); font-size: .8rem; }
+    .footer-disclaimer { color: var(--gray600) !important; font-size: .75rem !important; font-style: italic; }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a href="/" class="nav-logo">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 14h-2v-5H9l3-6 3 6h-2z"/></svg>
+      </div>
+      <span class="logo-text">Medi<span>Sense</span></span>
+    </a>
+    <button class="nav-toggle" onclick="this.nextElementSibling.classList.toggle('open')" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav-links">
+      <li><a href="/">Home</a></li>
+      <li><a href="/project" class="active">Diagnostics</a></li>
+      <li><a href="/about">About</a></li>
+      <li><a href="/contact">Contact</a></li>
+      <li><a href="/project" class="nav-cta">Try Now</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="breadcrumb">
+      <a href="/">Home</a>
+      <span>›</span>
+      <span>Diagnostics</span>
+    </div>
+    <h1>Health Risk Analyser</h1>
+    <p>Enter your health metrics below. The model will compute a risk profile based on 11 clinical and lifestyle indicators from our validated dataset.</p>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div class="dashboard">
+
+  <!-- LEFT: INPUT FORM -->
+  <div class="card">
+    <div class="card-title">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#00BFA6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5H6a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-5M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+      Patient Health Input
+    </div>
+    <p class="card-subtitle">Fill in as many fields as possible for a more accurate assessment.</p>
+
+    <!-- Completeness progress -->
+    <div class="completeness-bar-wrap">
+      <div class="completeness-label">
+        <span>Form completion</span>
+        <span id="completeness-pct">0%</span>
+      </div>
+      <div class="completeness-track">
+        <div class="completeness-fill" id="completeness-fill"></div>
+      </div>
+    </div>
+
+    <form id="diagnosis-form" onsubmit="runAnalysis(event)" novalidate>
+
+      <!-- Demographics -->
+      <p class="form-section-label">Demographics</p>
+      <div class="input-grid">
+        <div class="field">
+          <label>Age <span class="range-hint">18 – 100</span></label>
+          <input type="number" id="age" name="age" min="18" max="100" placeholder="e.g. 45" />
+        </div>
+        <div class="field">
+          <label>Gender</label>
+          <select id="gender" name="gender">
+            <option value="">Select…</option>
+            <option value="0">Female</option>
+            <option value="1">Male</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Physical Metrics -->
+      <p class="form-section-label">Physical Metrics</p>
+      <div class="input-grid">
+        <div class="field">
+          <label>BMI <span class="range-hint">10 – 50</span></label>
+          <input type="number" id="bmi" name="bmi" min="10" max="50" step="0.1" placeholder="e.g. 24.5" />
+        </div>
+        <div class="field">
+          <label>Blood Pressure <span class="range-hint">mmHg</span></label>
+          <input type="number" id="bp" name="bp" min="50" max="200" placeholder="e.g. 120" />
+        </div>
+        <div class="field">
+          <label>Glucose Level <span class="range-hint">mg/dL</span></label>
+          <input type="number" id="glucose" name="glucose" min="50" max="400" placeholder="e.g. 100" />
+        </div>
+        <div class="field">
+          <label>Cholesterol <span class="range-hint">mg/dL</span></label>
+          <input type="number" id="cholesterol" name="cholesterol" min="80" max="500" placeholder="e.g. 180" />
+        </div>
+        <div class="field full">
+          <label>Heart Rate <span class="range-hint">bpm: <span id="hr-val" style="color:var(--teal)">70</span></span></label>
+          <div class="slider-wrap">
+            <input type="range" id="heartrate" name="heartrate" min="40" max="180" value="70"
+              oninput="document.getElementById('hr-val').textContent=this.value" />
+            <span class="slider-val" id="hr-display">70 bpm</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Lifestyle -->
+      <p class="form-section-label">Lifestyle Factors</p>
+      <div class="input-grid">
+        <div class="field">
+          <label>Smoking</label>
+          <div class="toggle-group">
+            <label class="toggle-opt"><input type="radio" name="smoking" value="0" /><label>No</label></label>
+            <label class="toggle-opt"><input type="radio" name="smoking" value="1" /><label>Yes</label></label>
+          </div>
+        </div>
+        <div class="field">
+          <label>Alcohol Use</label>
+          <div class="toggle-group">
+            <label class="toggle-opt"><input type="radio" name="alcohol" value="0" /><label>No</label></label>
+            <label class="toggle-opt"><input type="radio" name="alcohol" value="1" /><label>Yes</label></label>
+          </div>
+        </div>
+        <div class="field">
+          <label>Physical Activity</label>
+          <select id="activity" name="activity">
+            <option value="">Select level…</option>
+            <option value="0">Sedentary</option>
+            <option value="1">Light</option>
+            <option value="2">Moderate/Active</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Family History of Disease</label>
+          <div class="toggle-group">
+            <label class="toggle-opt"><input type="radio" name="family" value="0" /><label>No</label></label>
+            <label class="toggle-opt"><input type="radio" name="family" value="1" /><label>Yes</label></label>
+          </div>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-analyze">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        Analyse Health Data
+      </button>
+      <button type="button" class="btn-reset" onclick="resetForm()">Clear all fields</button>
+    </form>
+  </div>
+
+  <!-- RIGHT: RESULTS PANEL -->
+  <div class="result-panel">
+
+    <!-- Disclaimer -->
+    <div class="disclaimer-card">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <p><strong>For informational use only.</strong> This tool does not diagnose disease. Always consult a qualified healthcare professional for medical decisions.</p>
+    </div>
+
+    <!-- Results card -->
+    <div class="card" id="results-card">
+      <div class="card-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#00BFA6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        Risk Assessment
+      </div>
+      <p class="card-subtitle">Complete the form and click Analyse to see results.</p>
+
+      <!-- Placeholder state -->
+      <div class="result-placeholder" id="result-placeholder">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;">
+          <circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/>
+        </svg>
+        <p>Your personalised risk report will appear here after you submit the form.</p>
+      </div>
+
+      <!-- Output state -->
+      <div class="result-output" id="result-output">
+        <div class="risk-score-wrap">
+          <p class="risk-label">Overall Disease Risk</p>
+          <div class="risk-gauge">
+            <div class="risk-gauge-bg"></div>
+            <div class="risk-gauge-fill" id="gauge-fill"></div>
+            <span class="risk-pct" id="risk-pct">—</span>
+          </div>
+          <div class="risk-tier" id="risk-tier">—</div>
+        </div>
+
+        <div class="factor-list">
+          <h4>Contributing Factor Breakdown</h4>
+          <div id="factors-output"></div>
+        </div>
+
+        <div class="advice-card" id="advice-card">
+          <h4>Recommendation</h4>
+          <p id="advice-text"></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Info card -->
+    <div class="card" style="padding:24px;">
+      <p style="font-size:.8rem;color:var(--gray600);line-height:1.6;">
+        <strong style="color:var(--navy);">About the model:</strong> Trained on 10,000 anonymised patient records with features including age, BMI, blood pressure, glucose, cholesterol, heart rate, smoking, alcohol use, physical activity, and family history. Binary outcome: disease present (1) or absent (0).
+      </p>
+    </div>
+
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div>
+      <a href="/" class="nav-logo" style="margin-bottom:8px;display:inline-flex;">
+        <div class="logo-icon" style="width:32px;height:32px;">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="width:17px;height:17px;fill:#0A1628;"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 14h-2v-5H9l3-6 3 6h-2z"/></svg>
+        </div>
+        <span class="logo-text" style="font-size:1.1rem;">Medi<span>Sense</span></span>
+      </a>
+      <p class="footer-tagline">Bridging data science and medicine to support earlier, better health decisions.</p>
+    </div>
+    <div class="footer-links">
+      <h4>Platform</h4>
+      <ul>
+        <li><a href="/project">Diagnostics</a></li>
+        <li><a href="/about">How It Works</a></li>
+      </ul>
+    </div>
+    <div class="footer-links">
+      <h4>Company</h4>
+      <ul>
+        <li><a href="/about">About</a></li>
+        <li><a href="/contact">Contact</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2025 MediSense. All rights reserved.</p>
+    <p class="footer-disclaimer">Not a substitute for professional medical advice.</p>
+  </div>
+</footer>
+
+<script>
+  // ── Heart rate display sync ──
+  const hrRange = document.getElementById('heartrate');
+  const hrDisplay = document.getElementById('hr-display');
+  hrRange.addEventListener('input', () => {
+    hrDisplay.textContent = hrRange.value + ' bpm';
+  });
+
+  // ── Form completeness tracker ──
+  const trackFields = ['age','gender','bmi','bp','glucose','cholesterol','activity'];
+  const radioGroups = ['smoking','alcohol','family'];
+  function updateCompleteness() {
+    let filled = 0;
+    const total = trackFields.length + radioGroups.length + 1; // +1 for heartrate (always set)
+    trackFields.forEach(id => {
+      const el = document.getElementById(id);
+      if (el && el.value.trim() !== '') filled++;
+    });
+    radioGroups.forEach(name => {
+      if (document.querySelector(`input[name="${name}"]:checked`)) filled++;
+    });
+    filled++; // heartrate always has a value
+    const pct = Math.round((filled / total) * 100);
+    document.getElementById('completeness-fill').style.width = pct + '%';
+    document.getElementById('completeness-pct').textContent = pct + '%';
+  }
+  document.getElementById('diagnosis-form').addEventListener('input', updateCompleteness);
+  updateCompleteness();
+
+  // ── Analysis logic ──
+  function runAnalysis(e) {
+    e.preventDefault();
+
+    const age = parseFloat(document.getElementById('age').value) || 40;
+    const bmi = parseFloat(document.getElementById('bmi').value) || 25;
+    const bp  = parseFloat(document.getElementById('bp').value)  || 120;
+    const glucose     = parseFloat(document.getElementById('glucose').value) || 100;
+    const cholesterol = parseFloat(document.getElementById('cholesterol').value) || 180;
+    const heartrate   = parseFloat(document.getElementById('heartrate').value) || 70;
+    const gender   = parseFloat(document.getElementById('gender').value)   || 0;
+    const activity = parseFloat(document.getElementById('activity').value) || 1;
+    const smoking  = parseFloat(document.querySelector('input[name="smoking"]:checked')?.value  ?? 0);
+    const alcohol  = parseFloat(document.querySelector('input[name="alcohol"]:checked')?.value  ?? 0);
+    const family   = parseFloat(document.querySelector('input[name="family"]:checked')?.value   ?? 0);
+
+    // Simple logistic-style scoring (illustrative, not a clinical model)
+    let score = 0;
+    if (age > 50) score += 0.20;
+    else if (age > 40) score += 0.10;
+    if (bmi > 30) score += 0.18;
+    else if (bmi > 25) score += 0.09;
+    if (bp > 140) score += 0.16;
+    else if (bp > 120) score += 0.07;
+    if (glucose > 200) score += 0.20;
+    else if (glucose > 125) score += 0.12;
+    if (cholesterol > 240) score += 0.12;
+    else if (cholesterol > 200) score += 0.06;
+    if (heartrate > 100) score += 0.07;
+    if (smoking) score += 0.14;
+    if (alcohol)  score += 0.05;
+    if (activity === 0) score += 0.08;
+    else if (activity === 2) score -= 0.06;
+    if (family) score += 0.15;
+    if (gender === 1) score += 0.03;
+    score = Math.min(Math.max(score, 0.02), 0.97);
+
+    const pct = Math.round(score * 100);
+    let tier = 'Low Risk', tierClass = 'low', gaugeColor = '#10B981', advice = '';
+    if (pct >= 60) {
+      tier = 'High Risk'; tierClass = 'high'; gaugeColor = '#EF4444';
+      advice = 'Your profile shows several elevated risk factors. We strongly recommend scheduling a comprehensive health evaluation with your physician in the near term.';
+    } else if (pct >= 35) {
+      tier = 'Moderate Risk'; tierClass = 'medium'; gaugeColor = '#F59E0B';
+      advice = 'Some risk indicators are above optimal levels. Consider lifestyle modifications and discuss a preventive screening plan with your doctor.';
+    } else {
+      advice = 'Your current metrics indicate a lower risk profile. Continue maintaining a balanced lifestyle, and keep up with regular routine check-ups.';
+    }
+
+    // Gauge rotation (0% = -45deg, 100% = 225deg range)
+    const deg = -45 + (pct / 100) * 270;
+    const fill = document.getElementById('gauge-fill');
+    fill.style.borderTopColor = gaugeColor;
+    fill.style.borderRightColor = pct > 50 ? gaugeColor : 'transparent';
+    fill.style.borderBottomColor = pct > 75 ? gaugeColor : 'transparent';
+    fill.style.transform = `rotate(${deg}deg)`;
+
+    document.getElementById('risk-pct').textContent = pct + '%';
+    const tierEl = document.getElementById('risk-tier');
+    tierEl.textContent = tier;
+    tierEl.className = 'risk-tier ' + tierClass;
+
+    // Factor breakdown
+    const factors = [
+      { name: 'Blood Glucose',  val: glucose + ' mg/dL', weight: glucose > 200 ? 0.9 : glucose > 125 ? 0.6 : 0.2, color: glucose > 200 ? '#EF4444' : glucose > 125 ? '#F59E0B' : '#10B981' },
+      { name: 'Age',            val: age + ' yrs',        weight: age > 50 ? 0.8 : age > 40 ? 0.5 : 0.15,           color: age > 50 ? '#EF4444' : age > 40 ? '#F59E0B' : '#10B981' },
+      { name: 'BMI',            val: bmi.toFixed(1),      weight: bmi > 30 ? 0.75 : bmi > 25 ? 0.4 : 0.1,           color: bmi > 30 ? '#EF4444' : bmi > 25 ? '#F59E0B' : '#10B981' },
+      { name: 'Blood Pressure', val: bp + ' mmHg',        weight: bp > 140 ? 0.7 : bp > 120 ? 0.4 : 0.1,            color: bp > 140 ? '#EF4444' : bp > 120 ? '#F59E0B' : '#10B981' },
+      { name: 'Cholesterol',    val: cholesterol + ' mg/dL', weight: cholesterol > 240 ? 0.6 : cholesterol > 200 ? 0.35 : 0.1, color: cholesterol > 240 ? '#EF4444' : cholesterol > 200 ? '#F59E0B' : '#10B981' },
+      { name: 'Heart Rate',     val: heartrate + ' bpm',  weight: heartrate > 100 ? 0.4 : 0.1,                       color: heartrate > 100 ? '#F59E0B' : '#10B981' },
+      { name: 'Family History', val: family ? 'Yes' : 'No', weight: family ? 0.65 : 0.05,                            color: family ? '#F59E0B' : '#10B981' },
+      { name: 'Smoking',        val: smoking ? 'Yes' : 'No', weight: smoking ? 0.6 : 0.05,                           color: smoking ? '#EF4444' : '#10B981' },
+    ];
+
+    const fOut = document.getElementById('factors-output');
+    fOut.innerHTML = factors.map(f => `
+      <div class="factor-item">
+        <span class="factor-name">${f.name}</span>
+        <span class="factor-val">${f.val}</span>
+        <div class="factor-bar-wrap">
+          <div class="factor-bar" style="width:${Math.round(f.weight*100)}%;background:${f.color};"></div>
+        </div>
+      </div>`).join('');
+
+    document.getElementById('advice-text').textContent = advice;
+    document.getElementById('result-placeholder').style.display = 'none';
+    document.getElementById('result-output').classList.add('visible');
+
+    // Scroll to results on mobile
+    if (window.innerWidth < 900) {
+      document.getElementById('results-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
+  function resetForm() {
+    document.getElementById('diagnosis-form').reset();
+    document.getElementById('hr-val').textContent = '70';
+    document.getElementById('hr-display').textContent = '70 bpm';
+    document.getElementById('result-output').classList.remove('visible');
+    document.getElementById('result-placeholder').style.display = 'block';
+    updateCompleteness();
+  }
+</script>
+</body>
+</html>
