@@ -332,7 +332,6 @@
 </head>
 <body>
 
-<!-- NAV -->
 <nav>
   <div class="nav-inner">
     <a href="/" class="nav-logo">
@@ -354,7 +353,6 @@
   </div>
 </nav>
 
-<!-- PAGE HEADER -->
 <div class="page-header">
   <div class="page-header-inner">
     <div class="breadcrumb">
@@ -367,18 +365,15 @@
   </div>
 </div>
 
-<!-- DASHBOARD -->
 <div class="dashboard">
 
-  <!-- LEFT: INPUT FORM -->
   <div class="card">
     <div class="card-title">
       <svg viewBox="0 0 24 24" fill="none" stroke="#00BFA6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5H6a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-5M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
       Patient Health Input
     </div>
-    <p class="card-subtitle">Fill in as many fields as possible for a more accurate assessment.</p>
+    <p class="card-subtitle">Fill in all fields for an accurate model assessment.</p>
 
-    <!-- Completeness progress -->
     <div class="completeness-bar-wrap">
       <div class="completeness-label">
         <span>Form completion</span>
@@ -391,16 +386,15 @@
 
     <form id="diagnosis-form" onsubmit="runAnalysis(event)" novalidate>
 
-      <!-- Demographics -->
       <p class="form-section-label">Demographics</p>
       <div class="input-grid">
         <div class="field">
           <label>Age <span class="range-hint">18 – 100</span></label>
-          <input type="number" id="age" name="age" min="18" max="100" placeholder="e.g. 45" />
+          <input type="number" id="age" name="age" min="18" max="100" placeholder="e.g. 45" required />
         </div>
         <div class="field">
           <label>Gender</label>
-          <select id="gender" name="gender">
+          <select id="gender" name="gender" required>
             <option value="">Select…</option>
             <option value="0">Female</option>
             <option value="1">Male</option>
@@ -408,55 +402,53 @@
         </div>
       </div>
 
-      <!-- Physical Metrics -->
       <p class="form-section-label">Physical Metrics</p>
       <div class="input-grid">
         <div class="field">
           <label>BMI <span class="range-hint">10 – 50</span></label>
-          <input type="number" id="bmi" name="bmi" min="10" max="50" step="0.1" placeholder="e.g. 24.5" />
+          <input type="number" id="bmi" name="bmi" min="10" max="50" step="0.1" placeholder="e.g. 24.5" required />
         </div>
         <div class="field">
           <label>Blood Pressure <span class="range-hint">mmHg</span></label>
-          <input type="number" id="bp" name="bp" min="50" max="200" placeholder="e.g. 120" />
+          <input type="number" id="bp" name="blood_pressure" min="50" max="200" placeholder="e.g. 120" required />
         </div>
         <div class="field">
           <label>Glucose Level <span class="range-hint">mg/dL</span></label>
-          <input type="number" id="glucose" name="glucose" min="50" max="400" placeholder="e.g. 100" />
+          <input type="number" id="glucose" name="glucose_level" min="50" max="400" placeholder="e.g. 100" required />
         </div>
         <div class="field">
           <label>Cholesterol <span class="range-hint">mg/dL</span></label>
-          <input type="number" id="cholesterol" name="cholesterol" min="80" max="500" placeholder="e.g. 180" />
+          <input type="number" id="cholesterol" name="cholesterol" min="80" max="500" placeholder="e.g. 180" required />
         </div>
         <div class="field full">
           <label>Heart Rate <span class="range-hint">bpm: <span id="hr-val" style="color:var(--teal)">70</span></span></label>
           <div class="slider-wrap">
-            <input type="range" id="heartrate" name="heartrate" min="40" max="180" value="70"
+            <input type="range" id="heartrate" name="heart_rate" min="40" max="180" value="70"
               oninput="document.getElementById('hr-val').textContent=this.value" />
             <span class="slider-val" id="hr-display">70 bpm</span>
           </div>
         </div>
       </div>
 
-      <!-- Lifestyle -->
       <p class="form-section-label">Lifestyle Factors</p>
       <div class="input-grid">
         <div class="field">
           <label>Smoking</label>
           <div class="toggle-group">
-            <label class="toggle-opt"><input type="radio" name="smoking" value="0" /><label>No</label></label>
+            <label class="toggle-opt"><input type="radio" name="smoking" value="0" checked /><label>No</label></label>
             <label class="toggle-opt"><input type="radio" name="smoking" value="1" /><label>Yes</label></label>
           </div>
         </div>
         <div class="field">
           <label>Alcohol Use</label>
           <div class="toggle-group">
-            <label class="toggle-opt"><input type="radio" name="alcohol" value="0" /><label>No</label></label>
+            <label class="toggle-opt"><input type="radio" name="alcohol" value="0" checked /><label>No</label></label>
             <label class="toggle-opt"><input type="radio" name="alcohol" value="1" /><label>Yes</label></label>
           </div>
         </div>
         <div class="field">
           <label>Physical Activity</label>
-          <select id="activity" name="activity">
+          <select id="activity" name="physical_activity" required>
             <option value="">Select level…</option>
             <option value="0">Sedentary</option>
             <option value="1">Light</option>
@@ -466,13 +458,13 @@
         <div class="field">
           <label>Family History of Disease</label>
           <div class="toggle-group">
-            <label class="toggle-opt"><input type="radio" name="family" value="0" /><label>No</label></label>
-            <label class="toggle-opt"><input type="radio" name="family" value="1" /><label>Yes</label></label>
+            <label class="toggle-opt"><input type="radio" name="family_history" value="0" checked /><label>No</label></label>
+            <label class="toggle-opt"><input type="radio" name="family_history" value="1" /><label>Yes</label></label>
           </div>
         </div>
       </div>
 
-      <button type="submit" class="btn-analyze">
+      <button type="submit" class="btn-analyze" id="submit-btn">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
         Analyse Health Data
       </button>
@@ -480,16 +472,13 @@
     </form>
   </div>
 
-  <!-- RIGHT: RESULTS PANEL -->
   <div class="result-panel">
 
-    <!-- Disclaimer -->
     <div class="disclaimer-card">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
       <p><strong>For informational use only.</strong> This tool does not diagnose disease. Always consult a qualified healthcare professional for medical decisions.</p>
     </div>
 
-    <!-- Results card -->
     <div class="card" id="results-card">
       <div class="card-title">
         <svg viewBox="0 0 24 24" fill="none" stroke="#00BFA6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
@@ -497,7 +486,6 @@
       </div>
       <p class="card-subtitle">Complete the form and click Analyse to see results.</p>
 
-      <!-- Placeholder state -->
       <div class="result-placeholder" id="result-placeholder">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;">
           <circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/>
@@ -505,7 +493,6 @@
         <p>Your personalised risk report will appear here after you submit the form.</p>
       </div>
 
-      <!-- Output state -->
       <div class="result-output" id="result-output">
         <div class="risk-score-wrap">
           <p class="risk-label">Overall Disease Risk</p>
@@ -529,17 +516,15 @@
       </div>
     </div>
 
-    <!-- Info card -->
     <div class="card" style="padding:24px;">
       <p style="font-size:.8rem;color:var(--gray600);line-height:1.6;">
-        <strong style="color:var(--navy);">About the model:</strong> Trained on 10,000 anonymised patient records with features including age, BMI, blood pressure, glucose, cholesterol, heart rate, smoking, alcohol use, physical activity, and family history. Binary outcome: disease present (1) or absent (0).
+        <strong style="color:var(--navy);">About the model:</strong> Evaluated by a custom architecture ensemble model trained on anonymised clinical health profiles. Binary outcomes calculate exact probability ranges dynamically via vector analysis.
       </p>
     </div>
 
   </div>
 </div>
 
-<!-- FOOTER -->
 <footer>
   <div class="footer-inner">
     <div>
@@ -567,7 +552,7 @@
     </div>
   </div>
   <div class="footer-bottom">
-    <p>© 2025 MediSense. All rights reserved.</p>
+    <p>© 2026 MediSense. All rights reserved.</p>
     <p class="footer-disclaimer">Not a substitute for professional medical advice.</p>
   </div>
 </footer>
@@ -582,7 +567,7 @@
 
   // ── Form completeness tracker ──
   const trackFields = ['age','gender','bmi','bp','glucose','cholesterol','activity'];
-  const radioGroups = ['smoking','alcohol','family'];
+  const radioGroups = ['smoking','alcohol','family_history'];
   function updateCompleteness() {
     let filled = 0;
     const total = trackFields.length + radioGroups.length + 1; // +1 for heartrate (always set)
@@ -601,56 +586,75 @@
   document.getElementById('diagnosis-form').addEventListener('input', updateCompleteness);
   updateCompleteness();
 
-  // ── Analysis logic ──
+  // ── Live Backend ML Model Analysis ──
   function runAnalysis(e) {
     e.preventDefault();
 
-    const age = parseFloat(document.getElementById('age').value) || 40;
-    const bmi = parseFloat(document.getElementById('bmi').value) || 25;
-    const bp  = parseFloat(document.getElementById('bp').value)  || 120;
-    const glucose     = parseFloat(document.getElementById('glucose').value) || 100;
-    const cholesterol = parseFloat(document.getElementById('cholesterol').value) || 180;
-    const heartrate   = parseFloat(document.getElementById('heartrate').value) || 70;
-    const gender   = parseFloat(document.getElementById('gender').value)   || 0;
-    const activity = parseFloat(document.getElementById('activity').value) || 1;
-    const smoking  = parseFloat(document.querySelector('input[name="smoking"]:checked')?.value  ?? 0);
-    const alcohol  = parseFloat(document.querySelector('input[name="alcohol"]:checked')?.value  ?? 0);
-    const family   = parseFloat(document.querySelector('input[name="family"]:checked')?.value   ?? 0);
-
-    // Simple logistic-style scoring (illustrative, not a clinical model)
-    let score = 0;
-    if (age > 50) score += 0.20;
-    else if (age > 40) score += 0.10;
-    if (bmi > 30) score += 0.18;
-    else if (bmi > 25) score += 0.09;
-    if (bp > 140) score += 0.16;
-    else if (bp > 120) score += 0.07;
-    if (glucose > 200) score += 0.20;
-    else if (glucose > 125) score += 0.12;
-    if (cholesterol > 240) score += 0.12;
-    else if (cholesterol > 200) score += 0.06;
-    if (heartrate > 100) score += 0.07;
-    if (smoking) score += 0.14;
-    if (alcohol)  score += 0.05;
-    if (activity === 0) score += 0.08;
-    else if (activity === 2) score -= 0.06;
-    if (family) score += 0.15;
-    if (gender === 1) score += 0.03;
-    score = Math.min(Math.max(score, 0.02), 0.97);
-
-    const pct = Math.round(score * 100);
-    let tier = 'Low Risk', tierClass = 'low', gaugeColor = '#10B981', advice = '';
-    if (pct >= 60) {
-      tier = 'High Risk'; tierClass = 'high'; gaugeColor = '#EF4444';
-      advice = 'Your profile shows several elevated risk factors. We strongly recommend scheduling a comprehensive health evaluation with your physician in the near term.';
-    } else if (pct >= 35) {
-      tier = 'Moderate Risk'; tierClass = 'medium'; gaugeColor = '#F59E0B';
-      advice = 'Some risk indicators are above optimal levels. Consider lifestyle modifications and discuss a preventive screening plan with your doctor.';
-    } else {
-      advice = 'Your current metrics indicate a lower risk profile. Continue maintaining a balanced lifestyle, and keep up with regular routine check-ups.';
+    const formElement = document.getElementById('diagnosis-form');
+    
+    // Quick validation check before running AJAX query
+    let isValid = true;
+    trackFields.forEach(id => {
+      const field = document.getElementById(id);
+      if (!field || field.value.trim() === '') isValid = false;
+    });
+    if (!isValid) {
+      alert("Please fill in all basic medical metric input choices before analyzing.");
+      return;
     }
 
-    // Gauge rotation (0% = -45deg, 100% = 225deg range)
+    const submitBtn = document.getElementById('submit-btn');
+    submitBtn.textContent = "Analyzing Patient Vector...";
+    submitBtn.disabled = true;
+
+    // Use built-in FormData interface to securely package parameters for Flask backend
+    const formData = new FormData(formElement);
+
+    // Communicate with backend Flask route via AJAX POST query
+    fetch('/project', {
+      method: 'POST',
+      body: formData
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Server encountered a metric processing error.');
+      }
+      return response.json();
+    })
+    .then(data => {
+      if (data.success) {
+        renderModelResults(data.probability, data.prediction);
+      } else {
+        alert("Server Error: " + data.error);
+      }
+    })
+    .catch(error => {
+      console.error('Error executing query:', error);
+      alert("An unexpected processing error occurred. Check that Flask app server is active.");
+    })
+    .finally(() => {
+      submitBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> Analyse Health Data`;
+      submitBtn.disabled = false;
+    });
+  }
+
+  // ── Render ML Model Responses in Original Visual Gauge and Breakdown layout ──
+  function renderModelResults(probability, prediction) {
+    const pct = Math.round(probability);
+    
+    let tier = 'Low Risk', tierClass = 'low', gaugeColor = '#10B981', advice = '';
+    
+    if (prediction === 1 || pct >= 60) {
+      tier = 'High Risk'; tierClass = 'high'; gaugeColor = '#EF4444';
+      advice = 'Your machine learning profile shows flagged diagnostic clinical thresholds. We strongly recommend scheduling a comprehensive physical health evaluation with a doctor soon.';
+    } else if (pct >= 35) {
+      tier = 'Moderate Risk'; tierClass = 'medium'; gaugeColor = '#F59E0B';
+      advice = 'Some metrics are sitting borderline outside of optimized targets. Consider strategic adjustments and review preventive baseline screening strategies.';
+    } else {
+      advice = 'Your structural input features indicate an excellent healthy baseline balance. Continue maintaining current nutritional and active metrics.';
+    }
+
+    // Gauge rotation logic (0% = -45deg, 100% = 225deg)
     const deg = -45 + (pct / 100) * 270;
     const fill = document.getElementById('gauge-fill');
     fill.style.borderTopColor = gaugeColor;
@@ -663,16 +667,26 @@
     tierEl.textContent = tier;
     tierEl.className = 'risk-tier ' + tierClass;
 
-    // Factor breakdown
+    // Grab form metric values dynamically to populate the visual feedback breakdown
+    const ageVal = document.getElementById('age').value;
+    const bmiVal = parseFloat(document.getElementById('bmi').value).toFixed(1);
+    const bpVal = document.getElementById('bp').value;
+    const glucoseVal = document.getElementById('glucose').value;
+    const cholVal = document.getElementById('cholesterol').value;
+    const hrVal = document.getElementById('heartrate').value;
+    const smokeVal = document.querySelector('input[name="smoking"]:checked').value === "1" ? "Yes" : "No";
+    const famVal = document.querySelector('input[name="family_history"]:checked').value === "1" ? "Yes" : "No";
+
+    // Set factor item weights relative to clean target boundaries
     const factors = [
-      { name: 'Blood Glucose',  val: glucose + ' mg/dL', weight: glucose > 200 ? 0.9 : glucose > 125 ? 0.6 : 0.2, color: glucose > 200 ? '#EF4444' : glucose > 125 ? '#F59E0B' : '#10B981' },
-      { name: 'Age',            val: age + ' yrs',        weight: age > 50 ? 0.8 : age > 40 ? 0.5 : 0.15,           color: age > 50 ? '#EF4444' : age > 40 ? '#F59E0B' : '#10B981' },
-      { name: 'BMI',            val: bmi.toFixed(1),      weight: bmi > 30 ? 0.75 : bmi > 25 ? 0.4 : 0.1,           color: bmi > 30 ? '#EF4444' : bmi > 25 ? '#F59E0B' : '#10B981' },
-      { name: 'Blood Pressure', val: bp + ' mmHg',        weight: bp > 140 ? 0.7 : bp > 120 ? 0.4 : 0.1,            color: bp > 140 ? '#EF4444' : bp > 120 ? '#F59E0B' : '#10B981' },
-      { name: 'Cholesterol',    val: cholesterol + ' mg/dL', weight: cholesterol > 240 ? 0.6 : cholesterol > 200 ? 0.35 : 0.1, color: cholesterol > 240 ? '#EF4444' : cholesterol > 200 ? '#F59E0B' : '#10B981' },
-      { name: 'Heart Rate',     val: heartrate + ' bpm',  weight: heartrate > 100 ? 0.4 : 0.1,                       color: heartrate > 100 ? '#F59E0B' : '#10B981' },
-      { name: 'Family History', val: family ? 'Yes' : 'No', weight: family ? 0.65 : 0.05,                            color: family ? '#F59E0B' : '#10B981' },
-      { name: 'Smoking',        val: smoking ? 'Yes' : 'No', weight: smoking ? 0.6 : 0.05,                           color: smoking ? '#EF4444' : '#10B981' },
+      { name: 'Blood Glucose',  val: glucoseVal + ' mg/dL', weight: glucoseVal > 200 ? 0.9 : glucoseVal > 125 ? 0.6 : 0.2, color: glucoseVal > 200 ? '#EF4444' : glucoseVal > 125 ? '#F59E0B' : '#10B981' },
+      { name: 'Age',            val: ageVal + ' yrs',       weight: ageVal > 50 ? 0.8 : ageVal > 40 ? 0.5 : 0.15,           color: ageVal > 50 ? '#EF4444' : ageVal > 40 ? '#F59E0B' : '#10B981' },
+      { name: 'BMI',            val: bmiVal,                weight: bmiVal > 30 ? 0.75 : bmiVal > 25 ? 0.4 : 0.1,           color: bmiVal > 30 ? '#EF4444' : bmiVal > 25 ? '#F59E0B' : '#10B981' },
+      { name: 'Blood Pressure', val: bpVal + ' mmHg',        weight: bpVal > 140 ? 0.7 : bpVal > 120 ? 0.4 : 0.1,            color: bpVal > 140 ? '#EF4444' : bpVal > 120 ? '#F59E0B' : '#10B981' },
+      { name: 'Cholesterol',    val: cholVal + ' mg/dL',    weight: cholVal > 240 ? 0.6 : cholVal > 200 ? 0.35 : 0.1,       color: cholVal > 240 ? '#EF4444' : cholVal > 200 ? '#F59E0B' : '#10B981' },
+      { name: 'Heart Rate',     val: hrVal + ' bpm',      weight: hrVal > 100 ? 0.4 : 0.1,                                color: hrVal > 100 ? '#F59E0B' : '#10B981' },
+      { name: 'Family History', val: famVal,                weight: famVal === "Yes" ? 0.65 : 0.05,                         color: famVal === "Yes" ? '#F59E0B' : '#10B981' },
+      { name: 'Smoking',        val: smokeVal,              weight: smokeVal === "Yes" ? 0.6 : 0.05,                         color: smokeVal === "Yes" ? '#EF4444' : '#10B981' },
     ];
 
     const fOut = document.getElementById('factors-output');
@@ -689,7 +703,7 @@
     document.getElementById('result-placeholder').style.display = 'none';
     document.getElementById('result-output').classList.add('visible');
 
-    // Scroll to results on mobile
+    // Scroll smoothly to results card on narrower viewpoints/mobile
     if (window.innerWidth < 900) {
       document.getElementById('results-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }

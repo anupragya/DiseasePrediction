@@ -1,11 +1,15 @@
-from flask import Flask, render_template, url_for, request, jsonify
+from flask import Flask, render_template, request, jsonify
 import joblib
 import numpy as np
 
 app = Flask(__name__)
 
-# Load your pre-trained model (Ensure this file is in your project directory)
-# model = joblib.load('your_model_filename.pkl') 
+# Load your actual trained machine learning model
+try:
+    model = joblib.load(r'C:\Users\anupr\OneDrive\Desktop\medical_disease\models\RandomForest.lb')
+except FileNotFoundError:
+    print("Warning: 'RandomForest.lb' not found. Please run train_model.py first.")
+    model = None
 
 @app.route('/')
 def index():
@@ -22,8 +26,11 @@ def contact():
 @app.route('/project', methods=['GET', 'POST'])
 def project():
     if request.method == 'POST':
+        if model is None:
+            return jsonify({'success': False, 'error': 'Model file not loaded on server.'}), 500
+            
         try:
-            # 1. Extract the health metrics sent from your project.html form
+            # Extract clinical metrics sent from your project form
             age = float(request.form.get('age', 0))
             gender = int(request.form.get('gender', 0))
             bmi = float(request.form.get('bmi', 0))
@@ -36,26 +43,29 @@ def project():
             physical_activity = int(request.form.get('physical_activity', 0))
             family_history = int(request.form.get('family_history', 0))
             
-            # 2. Arrange features to match the exact order of your CleanedData.csv columns
+            # Combine into a feature vector matching your CleanedData.csv columns exactly
             features = np.array([[age, gender, bmi, blood_pressure, glucose_level, 
                                   cholesterol, heart_rate, smoking, alcohol, 
                                   physical_activity, family_history]])
             
-            # 3. Predict using your loaded model
-            # prediction = model.predict(features)[0]
-            # probability = model.predict_proba(features)[0][1] # If your model supports it
+            # Live Model Execution
+            prediction = int(model.predict(features)[0])
             
-            # Placeholder result logic until you uncomment the model loading above:
-            prediction = 0 
+            # Get probability percentage for Class 1 (Disease presence)
+            probabilities = model.predict_proba(features)[0]
+            risk_probability = float(probabilities[1] * 100)
             
-            return render_template('project.html', prediction=prediction, calculated=True)
+            return jsonify({
+                'success': True,
+                'prediction': prediction,
+                'probability': round(risk_probability, 1)
+            })
             
         except Exception as e:
-            return f"An error occurred during prediction: {str(e)}", 400
+            return jsonify({'success': False, 'error': str(e)}), 400
 
-    # If it's a standard GET request, just display the empty form page
-    return render_template('project.html', calculated=False)
+    return render_template('project.html')
 
-# Essential missing block to run the development server
 if __name__ == '__main__':
     app.run(debug=True)
+
